@@ -41,9 +41,9 @@
 	// user registration to sqlite database
         if (isset($_POST['register'])) {
             $username = $_POST['username'];
-            $password = $_POST['password'];// In a secure application, you should hash the password
-            $stmt = $db->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
-            $stmt->execute([$username, $password]);
+            $password = $_POST['password'];// in secure appi should hash the password
+            $query = "INSERT INTO users (username, password) VALUES ('$username', '$password','')";
+            $result = $db->query($query);
             echo "<div class='alert alert-success'>Registered successfully!</div>";
         }
 	//handle user login
@@ -89,9 +89,10 @@
                     </form>
                 </div>
             </div>
-	    //show logout link
+	    
             <a href="logout.php" class="btn btn-secondary">Logout</a>
             <?php
+            //show logout link^
         } else {
             ?>
             <div class="row justify-content-center">
