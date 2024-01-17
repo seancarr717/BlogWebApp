@@ -68,6 +68,7 @@ if (isLoggedIn() && isset($_POST['add_post'])) {
 
 // Display logic based on user's login status
 if (isLoggedIn()) {
+    
     // Display posts and post submission form
     displayPosts($db);
     ?>
@@ -76,7 +77,10 @@ if (isLoggedIn()) {
         <textarea name="content" placeholder="Post Content" required></textarea>
         <input type="submit" name="add_post" value="Add Post">
     </form>
+    
     <?php
+    // Show logout link
+    echo '<a href="logout.php">Logout</a>';
 } else {
     // Display login and registration forms
     ?>
