@@ -41,24 +41,26 @@
 	// user registration to sqlite database
         if (isset($_POST['register'])) {
             $username = $_POST['username'];
-            $password = $_POST['password'];// in secure appi should hash the password
-            $query = "INSERT INTO users (username, password) VALUES ('$username', '$password','')";
-            $result = $db->query($query);
+            // Hash the password before storing it
+            $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+            $stmt = $db->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
+            $stmt->execute([$username, $password]);
             echo "<div class='alert alert-success'>Registered successfully!</div>";
         }
 	//handle user login
         if (isset($_POST['login'])) {
             $username = $_POST['username'];
-            $password = $_POST['password'];
-            $stmt = $db->prepare("SELECT * FROM users WHERE username = ? AND password = ?");
-            $stmt->execute([$username, $password]);
+            $submittedPassword = $_POST['password'];
+            $stmt = $db->prepare("SELECT * FROM users WHERE username = ?");
+            $stmt->execute([$username]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($user) {
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['username'] = $user['username'];
-                $_SESSION['logged_in'] = true;
-                echo "<div class='alert alert-success'>Logged in successfully!</div>";
+        if ($user && password_verify($submittedPassword, $user['password'])) {
+        //if password matches the hash in the database login
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['logged_in'] = true;
+        echo "<div class='alert alert-success'>Logged in successfully!</div>";
             } else {
                 echo "<div class='alert alert-danger'>Login failed!</div>";
             }
